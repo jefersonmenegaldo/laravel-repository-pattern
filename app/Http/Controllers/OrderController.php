@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Interfaces\OrderRepositoryInterface;
+use App\Services\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class OrderController extends Controller
 {
-    private OrderRepositoryInterface $orderRepository;
+    private $orderService;
 
-    public function __construct(OrderRepositoryInterface $orderRepository)
+    public function __construct(OrderService $orderService)
     {
-        $this->orderRepository = $orderRepository;
+        $this->orderService = $orderService;
     }
 
     public function index(): JsonResponse
     {
-        return response()->json([$this->orderRepository->getAll()]);
+        return response()->json([$this->orderService->getAllOrders()]);
     }
 
     public function store(Request $request): JsonResponse
@@ -31,7 +31,7 @@ class OrderController extends Controller
         ]);
 
         return response()->json([
-                $this->orderRepository->create($orderDetails)
+                $this->orderService->createOrder($orderDetails)
             ],
             Response::HTTP_CREATED
         );
@@ -42,7 +42,7 @@ class OrderController extends Controller
         $orderId = $request->route('id');
 
         return response()->json([
-            $this->orderRepository->getById($orderId)
+            $this->orderService->getOrderById($orderId)
         ]);
     }
 
@@ -58,14 +58,14 @@ class OrderController extends Controller
         ]);
 
         return response()->json([
-            $this->orderRepository->update($orderId, $orderDetails)
+            $this->orderService->updateOrder($orderId, $orderDetails)
         ]);
     }
 
     public function destroy(Request $request): JsonResponse
     {
         $orderId = $request->route('id');
-        $this->orderRepository->delete($orderId);
+        $this->orderService->destroyOrder($orderId);
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }

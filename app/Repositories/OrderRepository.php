@@ -7,33 +7,40 @@ use App\Models\Order;
 
 class OrderRepository implements OrderRepositoryInterface
 {
+    protected $entity;
+
+    public function __construct(Order $model)
+    {
+        $this->entity = $model;
+    }
+
     public function getAll()
     {
-        return Order::all();
+        return $this->entity->all();
     }
 
     public function getById($orderId)
     {
-        return Order::findOrFail($orderId);
+        return $this->entity->findOrFail($orderId);
     }
 
     public function delete($orderId)
     {
-        Order::destroy($orderId);
+        $this->entity->destroy($orderId);
     }
 
     public function create(array $orderDetails)
     {
-        return Order::create($orderDetails);
+        return $this->entity->create($orderDetails);
     }
 
     public function update($orderId, array $newDetails)
     {
-        return Order::whereId($orderId)->update($newDetails);
+        return $this->entity->whereId($orderId)->update($newDetails);
     }
 
     public function getAllFinished()
     {
-        return Order::where('is_fulfilled', true);
+        return $this->entity->where('is_fulfilled', true);
     }
 }
